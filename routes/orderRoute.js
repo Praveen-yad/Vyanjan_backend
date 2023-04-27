@@ -11,7 +11,7 @@ router.post('/order', async(req, res) => {
             tip:req.body.tip,
             payment:req.body.payment,
             status:req.body.status,
-            phone:req.body.phone
+            phone:123456789
         })
         res.status(200).send({sucess: true, id : response._id})
     }catch(error){
