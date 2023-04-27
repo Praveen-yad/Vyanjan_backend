@@ -17,7 +17,8 @@ const orderSchema = new Schema({
     data:{
         type:Date,
         default:Date.now
-    }
+    },
+    phone:Number
 })
 
 module.exports = mongoose.model('orderItems', orderSchema)
