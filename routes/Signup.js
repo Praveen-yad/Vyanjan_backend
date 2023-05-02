@@ -22,14 +22,15 @@ router.post(
     const securePass = await bcrypt.hash(req.body.password, salt)
     let exsistion = await user.findOne({email:req.body.email})
     if(exsistion){
-        res.send({succes:false, msg:'email exist'})
+        res.status(400).send({succes:false, msg:'email exist'})
     }else{
         try{
             await user.create({
                 name:req.body.name,
                 password:securePass,
                 location:req.body.location,
-                email:req.body.email
+                email:req.body.email,
+                business:req.body.business
             })
             res.json({succes: true})
         }catch(error){
@@ -68,7 +69,8 @@ router.post('/login',
             res.status(200).send({info : {
                 name:userData.name,
                 email:userData.email,
-                date:userData.date
+                date:userData.date,
+                business:userData.business
             }, sucess : true, token: authToken})
         }
     }catch(error){
