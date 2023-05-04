@@ -30,12 +30,22 @@ router.post('/getorders', async(req, res) => {
     }
 })
 
-router.post('/allOrders', async(req, res) => {
+router.get('/allOrders', async(req, res) => {
     try{
         const json = await orderItems.find({})
         res.status(200).send({sucess: true, json: json})
     }catch(error){
         res.status(400).send({suceess: false})
+    }
+})
+
+router.post('/upstatus', async(req,res) => {
+    try{
+        const json = await orderItems.findOneAndUpdate({_id:req.body.id},{status: req.body.status})
+        res.status(200).send(json)
+
+    }catch(error){
+        res.status(400).send({sucess:false})
     }
 })
 
