@@ -1,38 +1,55 @@
 const express = require('express')
 const router = express.Router()
 const foodItems = require('../models/fooditem')
-const {body, validationResult} = require('express-validator')
-router.post(
-    '/items', 
-    body('name',"Name Should to greater the 5 letters").isLength({min:5})
-    ,async(req, res) => {
+const jwt = require('jsonwebtoken')
+const jwtsecret = "MyNameIssomethingSomeHelloapple"
+const cloudinary = require('../utils/cloudinary')
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
 
+router.post('/items', async(req, res) => {
     try{
-        await foodItems.create({
-            name:req.body.name,
-            CategoryName:req.body.CategoryName,
-            description:req.body.description,
-            options:{
-                half:req.body.options.half,
-                full:req.body.options.full
-            },
-            img:req.body.img
-        })
-        res.json({succes: true})
+        if(req.body.img){
+            const upload = await cloudinary.uploader.upload(req.body.img,{
+                upload_preset:'vyanjan'
+            })
+            if(upload.asset_id){
+                await foodItems.create({
+                    name:req.body.name,
+                    CategoryName:req.body.CategoryName,
+                    description:req.body.description,
+                    options:{
+                        half:req.body.options.half,
+                        full:req.body.options.full
+                    },
+                    img:upload.url
+                })
+                res.status(200).send({sucess: true})
+            }
+        }
     }catch(error){
         console.log(error)
-        res.json({success: false })
+        res.status(400).send({sucess: false })
     }
 })
 
+router.post('/allFood',async (req,res) => {
+    jwt.verify(req.body.token, jwtsecret,async(err, data) => {
+        if(err){
+            res.status(400).send({verify: false})
+        }else{
+            const item = await foodItems.find({})        
+            res.status(200).send({verify: true, item:item})
+        }
+    })
+})
+
 router.get('/foodItems',async (req,res) => {
-    const item = await foodItems.find({})        
-    res.status(200).send(item)
+        try{
+            const item = await foodItems.find({})        
+            res.status(200).send(item)
+        }catch(error){
+            res.status(400).send({sucess: false})
+        }
 })
 
 router.post('/showcart', async(req,res) => {
@@ -40,4 +57,27 @@ router.post('/showcart', async(req,res) => {
     res.status(200).send(item) 
 })
 
+router.post('/remove', async(req, res) => {
+    try{
+        await foodItems.findByIdAndDelete({_id:req.body.id})
+        res.status(200).send({sucess: true})
+    }catch(error){
+        res.status(400).send({sucess: false})
+    }
+})
+
+
+// router.post("/cloud", async(req,res) => {
+//     try{
+//         const upload = await cloudinary.uploader.upload(req.body.img,{
+//             upload_preset:"vyanjan"
+//         }).then(res => console.log(res))
+//         res.send(upload)
+//     }catch(error){
+//         res.status(400).send({sucess:false})
+//     }
+// })
+
 module.exports = router;
+
+
