@@ -34,14 +34,13 @@ router.post('/items', async(req, res) => {
 
 router.post('/tunein', async(req,res) => {
     try{
-        if(req.body.img){
-            const upload = await cloudinary.uploader.upload(req.body.img,{
-                upload_preset:'tunein1'
-            })
-            res.status(200).send(upload.url)
-        }
+        const upload = await cloudinary.uploader.upload(req.body.img,{
+            upload_preset:'vyanjan'
+        })
+        console.log(upload)
+        res.status(200).send({url: upload.url})
     }catch(error){
-        res.status(400).send("Error")
+        res.status(400).send(error)
     }
 })
 
