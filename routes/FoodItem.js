@@ -32,6 +32,19 @@ router.post('/items', async(req, res) => {
     }
 })
 
+router.post('/tunein', async(req,res) => {
+    try{
+        if(req.body.img){
+            const upload = await cloudinary.uploader.upload(req.body.img,{
+                upload_preset:'tunein1'
+            })
+            res.status(200).send(upload.url)
+        }
+    }catch(error){
+        res.status(400).send("Error")
+    }
+})
+
 router.post('/allFood',async (req,res) => {
     jwt.verify(req.body.token, jwtsecret,async(err, data) => {
         if(err){

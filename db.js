@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const URL = "mongodb+srv://praveenyad99:praveenyad99@cluster0.xqkfphf.mongodb.net/goFoodmern?retryWrites=true&w=majority"
 const mongodb = () => { 
 
-     mongoose.connect(URL)
+    mongoose.connect(URL)
     const conn = mongoose.connection;
 
     conn.on('connected', () => {
